@@ -18,7 +18,7 @@ jobs:
       #### Modify below here to match your project ####
       files: |
         bed-presence-mk1.factory.yaml
-      esphome-version: latest
+      esphome-version: stable
       combined-name: bed-presence-mk1
       #### Modify above here to match your project ####
 
