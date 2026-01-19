@@ -24,7 +24,7 @@ jobs:
 
       release-summary: test
       release-url: test
-      release-version: test-0.7
+      release-version: test-0.8
 
   upload-to-release:
     name: Upload to Release
@@ -32,7 +32,7 @@ jobs:
     needs:
       - build-firmware
     with:
-      version: test-0.7
+      version: test-0.8
 
   push-to-docs:
     name: Push Latest Firmware to Docs Repo
@@ -40,23 +40,23 @@ jobs:
     needs:
       - build-firmware   # We need the build artifacts
     steps:
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: bed-presence-mk1   # This is the standard artifact name from esphome/workflows build.yml
-          path: firmware-build/
+      # - name: Download build artifacts
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: bed-presence-mk1   # This is the standard artifact name from esphome/workflows build.yml
+      #     path: firmware-build/
 
       - name: Clone docs repo
         run: |
-          echo "firmware-build structure..."
-          tree firmware-build
-          echo "Cloning docs repo"
-          git clone https://x-access-token:${{ secrets.DOCS_REPO_TOKEN }}@github.com/ElevatedSensors/docs.git docs-repo
+          echo "what's in the folder"
+          tree .
+          # echo "Cloning docs repo"
+          # git clone https://x-access-token:${{ secrets.DOCS_REPO_TOKEN }}@github.com/ElevatedSensors/docs.git docs-repo
 
-      - name: Copy files to docs repo (latest)
-        run: |
-          mkdir -p docs-repo/docs/firmware/${{ env.PRODUCT_NAME }}/latest
-          cp -f firmware-build/test-0.7/* docs-repo/docs/firmware/${{ env.PRODUCT_NAME }}/latest/
+      # - name: Copy files to docs repo (latest)
+        # run: |
+          # mkdir -p docs-repo/docs/firmware/${{ env.PRODUCT_NAME }}/latest
+          # cp -f firmware-build/test-0.8/* docs-repo/docs/firmware/${{ env.PRODUCT_NAME }}/latest/
 
           # Also copy to a versioned folder for history in docs
           # mkdir -p docs-repo/docs/firmware/${{ env.PRODUCT_NAME }}/${{ github.event.release.tag_name }}
