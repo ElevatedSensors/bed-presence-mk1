@@ -1,4 +1,4 @@
-name: Publish Firmware
+name: Publish Firmware Test
 
 on:
   pull_request:
