@@ -56,17 +56,18 @@ jobs:
           tree .
           echo "Cloning docs repo"
           git clone https://x-access-token:${{ secrets.DOCS_REPO_TOKEN }}@github.com/ElevatedSensors/docs.git docs-repo
-          echo "what's in the folder(post clone)"
+
+      - name: Copy files to docs repo (latest)
+        run: |
+          mkdir -p docs-repo/docs/firmware/${{ env.PRODUCT_NAME }}/latest
+          cp -f firmware-download/* docs-repo/docs/firmware/${{ env.PRODUCT_NAME }}/latest/
+
+          Also copy to a versioned folder for history in docs
+          mkdir -p docs-repo/docs/firmware/${{ env.PRODUCT_NAME }}/test-0.9
+          cp firmware-download/* docs-repo/docs/firmware/${{ env.PRODUCT_NAME }}/test-0.9/
+
+          echo "what's in the folder(post copy)"
           tree .
-
-      # - name: Copy files to docs repo (latest)
-        # run: |
-          # mkdir -p docs-repo/docs/firmware/${{ env.PRODUCT_NAME }}/latest
-          # cp -f firmware-build/test-0.8/* docs-repo/docs/firmware/${{ env.PRODUCT_NAME }}/latest/
-
-          # Also copy to a versioned folder for history in docs
-          # mkdir -p docs-repo/docs/firmware/${{ env.PRODUCT_NAME }}/${{ github.event.release.tag_name }}
-          # cp firmware-build/${{ env.PRODUCT_NAME }}/* docs-repo/docs/firmware/${{ env.PRODUCT_NAME }}/${{ github.event.release.tag_name }}/
 
       # - name: Commit and push to docs repo
       #   run: |
