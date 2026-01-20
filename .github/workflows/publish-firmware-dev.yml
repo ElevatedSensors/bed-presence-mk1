@@ -57,7 +57,7 @@ jobs:
           echo "Cloning docs repo"
           git clone https://x-access-token:${{ secrets.DOCS_REPO_TOKEN }}@github.com/ElevatedSensors/docs.git docs-repo
 
-      - name: Copy files to docs repo (latest)
+      - name: Copy files to docs repo
         run: |
           mkdir -p docs-repo/docs/firmware/${{ env.PRODUCT_NAME }}/latest
           cp -f firmware-download/* docs-repo/docs/firmware/${{ env.PRODUCT_NAME }}/latest/
@@ -69,11 +69,11 @@ jobs:
           echo "what's in the folder(post copy)"
           tree .
 
-      # - name: Commit and push to docs repo
-      #   run: |
-      #     cd docs-repo
-      #     git config user.name "GitHub Actions Bot"
-      #     git config user.email "actions@github.com"
-      #     git add .
-      #     git commit -m "Update latest firmware for ${{ env.PRODUCT_NAME }} from release ${{ github.event.release.tag_name }}" || echo "No changes to commit"
-      #     git push origin main
+      - name: Commit and push to docs repo
+        run: |
+          cd docs-repo
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+          git add .
+          git commit -m "Update latest firmware for ${{ env.PRODUCT_NAME }} from release ${{ github.event.release.tag_name }}" || echo "No changes to commit"
+          git push origin dev
