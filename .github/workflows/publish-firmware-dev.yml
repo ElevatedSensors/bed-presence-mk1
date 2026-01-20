@@ -24,7 +24,7 @@ jobs:
 
       release-summary: test
       release-url: test
-      release-version: test-0.8
+      release-version: test-0.9
 
   upload-to-release:
     name: Upload to Release
@@ -32,19 +32,19 @@ jobs:
     needs:
       - build-firmware
     with:
-      version: test-0.8
+      version: test-0.9
 
   push-to-docs:
     name: Push Latest Firmware to Docs Repo
     runs-on: ubuntu-latest
     needs:
-      - build-firmware   # We need the build artifacts
+      - upload-to-release
     steps:
-      # - name: Download build artifacts
-      #   uses: actions/download-artifact@v4
-      #   with:
-      #     name: bed-presence-mk1   # This is the standard artifact name from esphome/workflows build.yml
-      #     path: firmware-build/
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: bed-presence-mk1   # This is the standard artifact name from esphome/workflows build.yml
+          path: firmware-build/
 
       - name: Clone docs repo
         run: |
