@@ -62,7 +62,7 @@ jobs:
           mkdir -p docs-repo/docs/firmware/${{ env.PRODUCT_NAME }}/latest
           cp -f firmware-download/* docs-repo/docs/firmware/${{ env.PRODUCT_NAME }}/latest/
 
-          Also copy to a versioned folder for history in docs
+          # Also copy to a versioned folder for history in docs
           mkdir -p docs-repo/docs/firmware/${{ env.PRODUCT_NAME }}/test-0.9
           cp firmware-download/* docs-repo/docs/firmware/${{ env.PRODUCT_NAME }}/test-0.9/
 
