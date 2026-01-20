@@ -44,6 +44,8 @@ jobs:
         run: |
           mkdir -p firmware-download
           gh release download test-0.9 --dir firmware-download --clobber
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       - name: Clone docs repo
         run: |
