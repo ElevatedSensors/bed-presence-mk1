@@ -9,6 +9,7 @@ env:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   # build-firmware:
@@ -69,15 +70,38 @@ jobs:
           echo "what's in the folder(post copy)"
           tree .
 
-      - name: Commit and push to docs repo
-        run: |
-          cd docs-repo
-          git config user.name "GitHub Actions Bot"
-          git config user.email "actions@github.com"
+      - name: Create pull request in docs repo
+        uses: peter-evans/create-pull-request@v8
+        with:
+          token: ${{ secrets.DOCS_REPO_TOKEN }}
+          path: docs-repo
+          commit-message: |
+            Update ${{ env.PRODUCT_NAME }} firmware to ${{ github.event.release.tag_name }}
+          title: "chore(firmware): update ${{ env.PRODUCT_NAME }} to ${{ github.event.release.tag_name }}"
+          body: |
+			Automated update from release ${{ github.event.release.tag_name }}
 
-          git fetch origin
-          git checkout dev
+            Release link: ${{ github.event.release.html_url }}
+            Changelog: ${{ github.event.release.body }}
 
-          git add .
-          git commit -m "Update latest firmware for ${{ env.PRODUCT_NAME }} from release ${{ github.event.release.tag_name }}" || echo "No changes to commit"
-          git push origin dev
+            Test on staging or preview before merging.
+          branch: firmware-update-${{ env.PRODUCT_NAME }}-${{ github.event.release.tag_name }}
+          delete-branch: true
+          draft: true
+          # committer: GitHub Actions Bot <actions@github.com>
+          # author: GitHub Actions Bot <actions@github.com>
+          assignee: stephenpapierski
+
+
+      # - name: Commit and push to docs repo
+      #   run: |
+      #     cd docs-repo
+      #     git config user.name "GitHub Actions Bot"
+      #     git config user.email "actions@github.com"
+
+      #     git fetch origin
+      #     git checkout dev
+
+      #     git add .
+      #     git commit -m "Update latest firmware for ${{ env.PRODUCT_NAME }} from release ${{ github.event.release.tag_name }}" || echo "No changes to commit"
+      #     git push origin dev
