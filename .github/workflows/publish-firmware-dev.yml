@@ -79,7 +79,7 @@ jobs:
             Update ${{ env.PRODUCT_NAME }} firmware to ${{ github.event.release.tag_name }}
           title: "chore(firmware): update ${{ env.PRODUCT_NAME }} to ${{ github.event.release.tag_name }}"
           body: |
-			Automated update from release ${{ github.event.release.tag_name }}
+            Automated update from release ${{ github.event.release.tag_name }}
 
             Release link: ${{ github.event.release.html_url }}
             Changelog: ${{ github.event.release.body }}
