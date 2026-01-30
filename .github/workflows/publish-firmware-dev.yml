@@ -90,7 +90,7 @@ jobs:
           draft: true
           # committer: GitHub Actions Bot <actions@github.com>
           # author: GitHub Actions Bot <actions@github.com>
-          assignee: stephenpapierski
+          assignees: stephenpapierski
 
 
       # - name: Commit and push to docs repo
