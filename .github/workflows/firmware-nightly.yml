@@ -6,9 +6,6 @@ on:
       product-name:
         required: true
         type: string
-    secrets:
-      DOCS_REPO_TOKEN:
-        required: true
 
 jobs:
   build-firmware:
