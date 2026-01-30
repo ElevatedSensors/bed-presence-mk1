@@ -40,7 +40,7 @@ jobs:
       combined-name: bed-presence-mk1
       #### Modify above here to match your project ####
 
-      release-summary: ${{ needs.prepare.outputs.release-summary }}
+      release-summary: ${{ needs.get-release-summary.outputs.release-summary }}
       release-url: ${{ github.event.release.html_url }}
       release-version: ${{ github.event.release.tag_name }}
 
