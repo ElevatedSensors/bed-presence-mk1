@@ -27,3 +27,45 @@ jobs:
     uses: esphome/workflows/.github/workflows/upload-to-gh-release.yml@2025.10.0
     with:
       version: nightly
+
+  update-release-info:
+    name: Update Release Info
+    needs: upload-to-release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0 # Ensures we have tags and history
+
+      - name: Move Nightly Tag
+        run: |
+          # Force update local tag and push to remote
+          git tag -f nightly
+          git push origin nightly --force
+
+      - name: Update Release Description
+        run: |
+          # Generate metadata
+          BUILD_TIME=$(date -u +"%Y-%m-%d %H:%M UTC")
+          COMMIT_SHA="${{ github.sha }}"
+
+          # Create a prominent warning and info body
+          RELEASE_BODY=$(cat <<EOF
+          ### ⚠️ Nightly Build
+          This is an **automated rolling release** for testing purposes.
+
+          - **Last Updated:** $BUILD_TIME
+          - **Commit:** [$COMMIT_SHA](https://github.com/${{ github.repository }}/commit/$COMMIT_SHA)
+          - **Stability:** Experimental/May contain bugs
+          > [!IMPORTANT]
+          > Files here are replaced every night and on every push to main
+          EOF
+          )
+
+          # use gh cli to update the existing release
+          gh release edit nightly --title "nightly" --notes "$RELEASE_BODY"
+        env:
+          GH_TOKEN: ${{ github.token }}
