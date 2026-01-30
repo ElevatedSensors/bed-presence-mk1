@@ -12,8 +12,23 @@ permissions:
   pull-requests: write
 
 jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      release-summary: ${{ steps.get-summary.outputs.release-summary }}
+    steps:
+      - id: get-summary
+        run: |
+          BODY=$(cat << 'EOF'
+          ${{ github.event.release.body }}
+          EOF
+          )
+          FIRST_LINE=$(echo "$BODY" | head -n 1)
+          echo "release-summary=$FIRST_LINE" >> $GITHUB_OUTPUT
+
   build-firmware:
     name: Build Firmware
+    needs: prepare
     uses: esphome/workflows/.github/workflows/build.yml@2025.10.0
     with:
       #### Modify below here to match your project ####
@@ -23,7 +38,7 @@ jobs:
       combined-name: bed-presence-mk1
       #### Modify above here to match your project ####
 
-      release-summary: ${{ trim(split(github.event.release.body, '\n')[0]) }} # grab first line of release notes
+      release-summary: ${{ needs.prepare.outputs.release-summary }}
       release-url: ${{ github.event.release.html_url }}
       release-version: ${{ github.event.release.tag_name }}
 
