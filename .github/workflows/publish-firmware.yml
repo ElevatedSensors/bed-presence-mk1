@@ -12,7 +12,8 @@ permissions:
   pull-requests: write
 
 jobs:
-  prepare:
+  get-release-summary:
+    name: Get Release Summary
     runs-on: ubuntu-latest
     outputs:
       release-summary: ${{ steps.get-summary.outputs.release-summary }}
@@ -23,12 +24,13 @@ jobs:
           ${{ github.event.release.body }}
           EOF
           )
-          FIRST_LINE=$(echo "$BODY" | head -n 1)
+          # head gets the first line, tr removes carriage return
+          FIRST_LINE=$(echo "$BODY" | head -n 1 | tr -d '\r')
           echo "release-summary=$FIRST_LINE" >> $GITHUB_OUTPUT
 
   build-firmware:
     name: Build Firmware
-    needs: prepare
+    needs: get-release-summary
     uses: esphome/workflows/.github/workflows/build.yml@2025.10.0
     with:
       #### Modify below here to match your project ####
