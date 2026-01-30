@@ -1,0 +1,12 @@
+packages:
+  factory: !include bed-presence-mk1.factory.yaml
+
+esphome:
+  project:
+    version: nightly
+
+update:
+  - platform: http_request
+    id: update_http_request
+    source: https://github.com/ElevatedSensors/bed-presence-mk1/releases/download/nightly/bed-presence-mk1.manifest.json
+    update_interval: 1m
