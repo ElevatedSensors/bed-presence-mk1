@@ -1,0 +1,17 @@
+name: Nightly Build
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '0 0 * * *'   # run every day at 00:00
+  workflow_dispatch:
+
+jobs:
+  nightly:
+    permissions:
+      contents: write
+    # uses: ElevatedSensors/workflows/.github/workflows/firmware-nightly.yml@main
+    uses: ElevatedSensors/bed-presence-mk1/.github/workflows/firmware-nightly.yml@main
+    with:
+      product-name: "bed-presence-mk1"

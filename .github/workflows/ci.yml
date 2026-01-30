@@ -2,9 +2,6 @@ name: CI
 
 on:
   pull_request:
-    # paths:
-    #   - '*.yaml'
-    #   - '.github/workflows/ci.yml'
   schedule:
     - cron: '0 0 * * *'   # run every day at 00:00
   workflow_dispatch:
