@@ -1,14 +1,15 @@
-name: Publish Firmware
+name: Publish Firmware Test
 
 on:
   release:
-    types: [published]
+    types: [released]
 
 env:
   PRODUCT_NAME: bed-presence-mk1
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   build-firmware:
@@ -22,7 +23,7 @@ jobs:
       combined-name: bed-presence-mk1
       #### Modify above here to match your project ####
 
-      release-summary: ${{ github.event.release.body }}
+      release-summary: ${{ github.event.release.body | split('\n') | first | trim }}
       release-url: ${{ github.event.release.html_url }}
       release-version: ${{ github.event.release.tag_name }}
 
@@ -38,32 +39,69 @@ jobs:
     name: Push Latest Firmware to Docs Repo
     runs-on: ubuntu-latest
     needs:
-      - build-firmware   # We need the build artifacts
+      - upload-to-release
     steps:
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: bed-presence-mk1   # This is the standard artifact name from esphome/workflows build.yml
-          path: firmware-build/
+      - name: Download release assets
+        run: |
+          mkdir -p firmware-download
+          gh release download ${{ github.event.release.tag_name }} \
+            --repo ${{ github.repository }} \
+            --dir firmware-download \
+            --clobber
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       - name: Clone docs repo
         run: |
-          ls
+          echo "what's in the folder(pre clone)"
+          tree .
+          echo "Cloning docs repo"
           git clone https://x-access-token:${{ secrets.DOCS_REPO_TOKEN }}@github.com/ElevatedSensors/docs.git docs-repo
 
-      - name: Copy files to docs repo (latest)
+      - name: Copy files to docs repo
         run: |
-          mkdir -p docs-repo/firmware/${{ env.PRODUCT_NAME }}/latest
-          cp -f firmware-build/${{ env.PRODUCT_NAME }}/* docs-repo/firmware/${{ env.PRODUCT_NAME }}/latest/
-          # Also copy to a versioned folder for history in docs
-          mkdir -p docs-repo/firmware/${{ env.PRODUCT_NAME }}/${{ github.event.release.tag_name }}
-          cp firmware-build/${{ env.PRODUCT_NAME }}/* docs-repo/firmware/${{ env.PRODUCT_NAME }}/${{ github.event.release.tag_name }}/
+          mkdir -p docs-repo/docs/firmware/${{ env.PRODUCT_NAME }}/latest
+          cp -f firmware-download/* docs-repo/docs/firmware/${{ env.PRODUCT_NAME }}/latest/
 
-      - name: Commit and push to docs repo
-        run: |
-          cd docs-repo
-          git config user.name "GitHub Actions Bot"
-          git config user.email "actions@github.com"
-          git add .
-          git commit -m "Update latest firmware for ${{ env.PRODUCT_NAME }} from release ${{ github.event.release.tag_name }}" || echo "No changes to commit"
-          git push origin main
+          # Also copy to a versioned folder for history in docs
+          mkdir -p docs-repo/docs/firmware/${{ env.PRODUCT_NAME }}/${{ github.event.release.tag_name }}
+          cp firmware-download/* docs-repo/docs/firmware/${{ env.PRODUCT_NAME }}/${{ github.event.release.tag_name }}/
+
+          echo "what's in the folder(post copy)"
+          tree .
+
+      - name: Create pull request in docs repo
+        uses: peter-evans/create-pull-request@v8
+        with:
+          token: ${{ secrets.DOCS_REPO_TOKEN }}
+          path: docs-repo
+          commit-message: |
+            Update ${{ env.PRODUCT_NAME }} firmware to ${{ github.event.release.tag_name }}
+          title: "chore(firmware): update ${{ env.PRODUCT_NAME }} to ${{ github.event.release.tag_name }}"
+          body: |
+            Automated update from release ${{ github.event.release.tag_name }}
+
+            Release link: ${{ github.event.release.html_url }}
+            Changelog: ${{ github.event.release.body }}
+
+            Test on staging or preview before merging.
+          branch: firmware-update-${{ env.PRODUCT_NAME }}-${{ github.event.release.tag_name }}
+          delete-branch: true
+          draft: true
+          # committer: GitHub Actions Bot <actions@github.com>
+          # author: GitHub Actions Bot <actions@github.com>
+          assignees: stephenpapierski
+
+
+      # - name: Commit and push to docs repo
+      #   run: |
+      #     cd docs-repo
+      #     git config user.name "GitHub Actions Bot"
+      #     git config user.email "actions@github.com"
+
+      #     git fetch origin
+      #     git checkout dev
+
+      #     git add .
+      #     git commit -m "Update latest firmware for ${{ env.PRODUCT_NAME }} from release ${{ github.event.release.tag_name }}" || echo "No changes to commit"
+      #     git push origin dev
