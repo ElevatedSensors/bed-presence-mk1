@@ -23,7 +23,7 @@ jobs:
       combined-name: bed-presence-mk1
       #### Modify above here to match your project ####
 
-      release-summary: ${{ github.event.release.body | split('\n') | first | trim }}
+      release-summary: ${{ trim(split(github.event.release.body, '\n')[0]) }} # grab first line of release notes
       release-url: ${{ github.event.release.html_url }}
       release-version: ${{ github.event.release.tag_name }}
 
