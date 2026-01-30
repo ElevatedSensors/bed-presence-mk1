@@ -11,7 +11,6 @@ jobs:
   nightly:
     permissions:
       contents: write
-    # uses: ElevatedSensors/workflows/.github/workflows/firmware-nightly.yml@main
-    uses: ElevatedSensors/bed-presence-mk1/.github/workflows/firmware-nightly.yml@main
+    uses: ElevatedSensors/workflows/.github/workflows/firmware-nightly.yml@main
     with:
       product-name: "bed-presence-mk1"
