@@ -1,0 +1,42 @@
+name: Hubitat Bundle
+
+on:
+  workflow_call:
+    inputs:
+      product-name:
+        required: true
+        type: string
+      build-type:
+        required: true
+        type: string
+
+jobs:
+  bundle:
+    name: Bundle
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Build bundle
+        run: |
+          BUNDLE_DIR="${{ inputs.product-name }}-bundle"
+          mkdir "$BUNDLE_DIR"
+
+          FILES="integrations/hubitat"
+          PASCAL_NAME=$(echo "${{ inputs.product-name }}" | sed -r 's/(^|-)([a-z0-9])/\U\2/g')
+          cp "$FILES/bundles/${{ inputs.product-name }}.txt" "$BUNDLE_DIR/install.txt"
+          cp "$FILES/bundles/${{ inputs.product-name }}.txt" "$BUNDLE_DIR/update.txt"
+          cp "$FILES/drivers/${{ inputs.product-name }}.groovy" "$BUNDLE_DIR/elevated_sensors.$PASCAL_NAME.groovy"
+          wget -O "$BUNDLE_DIR/esphome.espHomeApiHelper.groovy" "https://raw.githubusercontent.com/ElevatedSensors/hubitat-espHomeApiHelper/refs/heads/main/ESPHome/ESPHome-API-Library.groovy"
+
+          zip -r "${{ inputs.product-name }}-hubitat-bundle.zip" "$BUNDLE_DIR"
+
+          VERSION="${{ inputs.build-type == 'release' && github.event.release.tag_name || 'nightly' }}"
+
+          gh release upload "$VERSION" \
+            "${{ inputs.product-name  }}-hubitat-bundle.zip" \
+            "$BUNDLE_DIR/elevated_sensors.$PASCAL_NAME.groovy" \
+            --clobber
+        env:
+          GH_TOKEN: ${{ github.token }}
