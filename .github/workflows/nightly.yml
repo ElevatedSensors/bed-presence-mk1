@@ -15,5 +15,3 @@ jobs:
     with:
       product-name: "bed-presence-mk1"
       release-type: "nightly"
-    secrets:
-      DOCS_REPO_TOKEN: ${{ secrets.DOCS_REPO_TOKEN }}
