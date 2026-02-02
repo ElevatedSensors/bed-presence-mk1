@@ -12,6 +12,6 @@ jobs:
     uses: ElevatedSensors/workflows/.github/workflows/firmware-publish.yml@main
     with:
       product-name: "bed-presence-mk1"
-      release-type: "release"
+      build-type: "release"
     secrets:
       DOCS_REPO_TOKEN: ${{ secrets.DOCS_REPO_TOKEN }}
