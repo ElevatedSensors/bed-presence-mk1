@@ -8,7 +8,7 @@ metadata {
         namespace: 'elevated_sensors',
         author: 'Elevated Sensors',
         singleThreaded: true,
-        importUrl: 'https://raw.githubusercontent.com/ElevatedSensors/sensor-configs/main/integrations/hubitat/drivers/bed-presence-mk1.groovy') {
+        importUrl: 'https://github.com/ElevatedSensors/bed-presence-mk1/releases/latest/download/elevated_sensors.BedPresenceMk1.groovy') {
 
         capability 'Sensor'
         capability 'Refresh'
@@ -321,7 +321,7 @@ private double round2(final double value) {
 }
 
 private void syncDriverVersion() {
-    final String DRIVER_VERSION = "2025.6.0"
+    final String DRIVER_VERSION = "dev"
 
     final String stored = device.getDataValue("Driver Version")
     if (stored != DRIVER_VERSION) {
