@@ -3,7 +3,7 @@ name: CI
 on:
   pull_request:
   schedule:
-    - cron: '0 0 * * *'   # run every day at 00:00
+    - cron: '0 7 * * *'   # run every day at 07:00 UTC
   workflow_dispatch:
 
 concurrency:
