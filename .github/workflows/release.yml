@@ -9,7 +9,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
-    uses: ElevatedSensors/workflows/.github/workflows/firmware-publish.yml@main
+    uses: ElevatedSensors/workflows/.github/workflows/firmware-publish.yml@v1
     with:
       product-name: "bed-presence-mk1"
       build-type: "release"
