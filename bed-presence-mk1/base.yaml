@@ -1,6 +1,8 @@
 substitutions:
   sensor_gpio_left: GPIO10
   sensor_gpio_right: GPIO20
+  left_bed_sensor_name: Left
+  right_bed_sensor_name: Right
 
 packages:
   diagnostics: !include
@@ -14,15 +16,15 @@ packages:
   left_bed_sensor: !include
     file: sensor.yaml
     vars:
-      sensor_name: Left
-      sensor_id: left
+      sensor_name: ${left_bed_sensor_name}
+      sensor_id: ${left_bed_sensor_name}
       sensor_gpio: ${sensor_gpio_left}
 
   right_bed_sensor: !include
     file: sensor.yaml
     vars:
-      sensor_name: Right
-      sensor_id: right
+      sensor_name: ${right_bed_sensor_name}
+      sensor_id: ${right_bed_sensor_name}
       sensor_gpio: ${sensor_gpio_right}
 
 binary_sensor:
@@ -32,7 +34,7 @@ binary_sensor:
     device_class: occupancy
     icon: mdi:bunk-bed
     disabled_by_default: true
-    lambda: return id(bed_occupied_left_fast).state && id(bed_occupied_right_fast).state;
+    lambda: return id(bed_occupied_${left_bed_sensor_name}_fast).state && id(bed_occupied_${right_bed_sensor_name}_fast).state;
 
   - platform: template
     name: Bed Occupied Either (Fast)
@@ -40,21 +42,21 @@ binary_sensor:
     device_class: occupancy
     icon: mdi:bunk-bed
     disabled_by_default: true
-    lambda: return id(bed_occupied_left_fast).state || id(bed_occupied_right_fast).state;
+    lambda: return id(bed_occupied_${left_bed_sensor_name}_fast).state || id(bed_occupied_${right_bed_sensor_name}_fast).state;
 
   - platform: template
     name: Bed Occupied Both
     id: bed_occupied_both
     device_class: occupancy
     icon: mdi:bunk-bed
-    lambda: return id(bed_occupied_left).state && id(bed_occupied_right).state;
+    lambda: return id(bed_occupied_${left_bed_sensor_name}).state && id(bed_occupied_${right_bed_sensor_name}).state;
 
   - platform: template
     name: Bed Occupied Either
     id: bed_occupied_either
     device_class: occupancy
     icon: mdi:bunk-bed
-    lambda: return id(bed_occupied_left).state || id(bed_occupied_right).state;
+    lambda: return id(bed_occupied_${left_bed_sensor_name}).state || id(bed_occupied_${right_bed_sensor_name}).state;
 
 switch:
   - platform: template

@@ -62,3 +62,5 @@ packages:
 #   reporting_interval_max: '180s'
 #   calibrate_100: '408000'
 #   calibrate_0: '276000'
+#   left_bed_sensor_name: 'John'
+#   right_bed_sensor_name: 'Jane'
